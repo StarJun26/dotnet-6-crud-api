@@ -23,11 +23,21 @@ var builder = WebApplication.CreateBuilder(args);
 
     // configure DI for application services
     services.AddScoped<IUserService, UserService>();
+
+    //configure Swagger/OpenAPI
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
 }
 
 var app = builder.Build();
 
 // configure HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 {
     // global cors policy
     app.UseCors(x => x

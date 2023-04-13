@@ -40,6 +40,7 @@ typings
 # .NET compiled files
 bin
 obj
+.vs
 
 # local sqlite db that is auto generated
 LocalDatabase.db
