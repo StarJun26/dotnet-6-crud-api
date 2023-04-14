@@ -8,8 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 {
     var services = builder.Services;
     var env = builder.Environment;
- 
+
+    //use in memory DB
     services.AddDbContext<DataContext>();
+    /*
+        //connect to SQL Server with connection string
+        var connectionString = string.Empty;
+        services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+    */
+
     services.AddCors();
     services.AddControllers().AddJsonOptions(x =>
     {
