@@ -4,41 +4,36 @@ using AutoMapper;
 using BCrypt.Net;
 using WebApi.Entities;
 using WebApi.Helpers;
+using WebApi.Logger;
 using WebApi.Models.Users;
-
-public interface IUserService
-{
-    IEnumerable<User> GetAll();
-    User GetById(int id);
-    void Create(CreateRequest model);
-    void Update(int id, UpdateRequest model);
-    void Delete(int id);
-}
 
 public class UserService : IUserService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
+    private readonly ILoggingService _logger;
 
     public UserService(
         DataContext context,
-        IMapper mapper)
+        IMapper mapper,
+        ILoggingService logger)
     {
         _context = context;
         _mapper = mapper;
+        _logger = logger;
     }
 
-    public IEnumerable<User> GetAll()
+    public IEnumerable<User> GetAllUsers()
     {
         return _context.Users;
     }
 
-    public User GetById(int id)
+    public async Task<User> GetUserByIdAsync(int id)
     {
-        return getUser(id);
+        return await getUser(id);
     }
 
-    public void Create(CreateRequest model)
+    public async Task CreateUserAsync(CreateRequest model)
     {
         // validate
         if (_context.Users.Any(x => x.Email == model.Email))
@@ -51,13 +46,14 @@ public class UserService : IUserService
         user.PasswordHash = BCrypt.HashPassword(model.Password);
 
         // save user
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        await _context.Users.AddAsync(user);
+        int id = await _context.SaveChangesAsync();
+        _logger.LogInformation("User {0} successfully created !!", id);
     }
 
-    public void Update(int id, UpdateRequest model)
+    public async Task UpdateUserAsync(int id, UpdateRequest model)
     {
-        var user = getUser(id);
+        var user = await getUser(id);
 
         // validate
         if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
@@ -70,21 +66,23 @@ public class UserService : IUserService
         // copy model to user and save
         _mapper.Map(model, user);
         _context.Users.Update(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("User {0} successfully updated !!", id);
     }
 
-    public void Delete(int id)
+    public async Task DeleteUserAsync(int id)
     {
-        var user = getUser(id);
+        var user = await getUser(id);
         _context.Users.Remove(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("User {0} successfully deleted !!", id);
     }
 
     // helper methods
 
-    private User getUser(int id)
+    private async Task<User> getUser(int id)
     {
-        var user = _context.Users.Find(id);
+        var user = await _context.Users.FindAsync(id);
         if (user == null) throw new KeyNotFoundException("User not found");
         return user;
     }

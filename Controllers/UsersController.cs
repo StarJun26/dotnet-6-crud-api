@@ -1,6 +1,5 @@
 ﻿namespace WebApi.Controllers;
 
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Users;
 using WebApi.Services;
@@ -10,48 +9,44 @@ using WebApi.Services;
 public class UsersController : ControllerBase
 {
     private IUserService _userService;
-    private IMapper _mapper;
 
-    public UsersController(
-        IUserService userService,
-        IMapper mapper)
+    public UsersController(IUserService userService)
     {
         _userService = userService;
-        _mapper = mapper;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        var users = _userService.GetAll();
+        var users = _userService.GetAllUsers();
         return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var user = _userService.GetById(id);
+        var user = await _userService.GetUserByIdAsync(id);
         return Ok(user);
     }
 
     [HttpPost]
-    public IActionResult Create(CreateRequest model)
+    public async Task<IActionResult> Create(CreateRequest model)
     {
-        _userService.Create(model);
+        await _userService.CreateUserAsync(model);
         return Ok(new { message = "User created" });
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, UpdateRequest model)
+    public async Task<IActionResult> Update(int id, UpdateRequest model)
     {
-        _userService.Update(id, model);
+        await _userService.UpdateUserAsync(id, model);
         return Ok(new { message = "User updated" });
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        _userService.Delete(id);
+        await _userService.DeleteUserAsync(id);
         return Ok(new { message = "User deleted" });
     }
 }

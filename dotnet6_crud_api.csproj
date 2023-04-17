@@ -4,6 +4,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove="WebApiTest\**" />
+      <Content Remove="WebApiTest\**" />
+      <EmbeddedResource Remove="WebApiTest\**" />
+      <None Remove="WebApiTest\**" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="AutoMapper" Version="11.0.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />

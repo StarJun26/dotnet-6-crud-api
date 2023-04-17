@@ -1,5 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Extensions.Logging.Configuration;
+using System.Text.Json.Serialization;
 using WebApi.Helpers;
+using WebApi.Logger;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     // configure DI for application services
     services.AddScoped<IUserService, UserService>();
+    services.AddSingleton<ILoggingService, TestableLogger>();
 
     //configure Swagger/OpenAPI
     services.AddEndpointsApiExplorer();

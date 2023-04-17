@@ -7,6 +7,8 @@ public class DataContext : DbContext
 {
     protected readonly IConfiguration Configuration;
 
+    public DataContext() { }
+
     public DataContext(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -20,5 +22,5 @@ public class DataContext : DbContext
         options.UseSqlServer(Configuration.GetConnectionString("UserDB"));
     }
 
-    public DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 }
